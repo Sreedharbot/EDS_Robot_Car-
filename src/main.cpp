@@ -7,7 +7,7 @@ uint8_t new_state = 0;
 uint8_t but_value;
 uint8_t activate;
 
-uint8_t MAX_SPEED = 150;
+uint8_t MAX_SPEED = 50;
 float SOUND_SPEED = 0.034;       //speed of sound 343 m/s
 
 
@@ -172,11 +172,37 @@ void ODS_Data(ODsensor *ods){
 
  }
 
+ void Mot_left(){
+  analogWrite(M1_P1,0);
+  analogWrite(M1_P2,MAX_SPEED);
+  analogWrite(M2_P1,0);
+  analogWrite(M2_P2,0);
+
+ }
+
+void Mot_right(){
+  analogWrite(M1_P1,0);
+  analogWrite(M1_P2,0);
+  analogWrite(M2_P1,0);
+  analogWrite(M2_P2,MAX_SPEED);
+
+ }
+
+
  void Mot_halt(){
-  digitalWrite(M1_P1,0);
-  digitalWrite(M1_P2,0);
-  digitalWrite(M2_P1,0);
-  digitalWrite(M2_P2,0);
+  analogWrite(M1_P1,0);
+  analogWrite(M1_P2,0);
+  analogWrite(M2_P1,0);
+  analogWrite(M2_P2,0);
+
+ }
+
+ 
+ void Mot_Revers(){
+  analogWrite(M1_P1,MAX_SPEED);
+  analogWrite(M1_P2,0);
+  analogWrite(M2_P1,MAX_SPEED);
+  analogWrite(M2_P2,0);
 
  }
 
@@ -201,6 +227,43 @@ void ODS_Data(ODsensor *ods){
       Serial2.print(USSA.US_2_data);
       Serial2.print("|");
       Serial2.println(USSA.US_3_data);
+
+
+    if((USSA.US_1_data >= 10) || (USSA.US_2_data >= 10) || (USSA.US_3_data >= 10)){
+        Mot_forward();
+    }
+
+    if((USSA.US_1_data <= 2) || (USSA.US_2_data <= 2) || (USSA.US_3_data <= 2)){
+        Mot_halt();
+    }
+
+    if(USSA.US_3_data<5){
+        Mot_left();
+      }
+
+    if(USSA.US_1_data<5){
+        Mot_right();
+      }
+    
+    if(USSA.US_2_data<5){
+        Mot_halt();
+    }
+
+    if((ODSA.OD1_data>=900) && (ODSA.OD1_data<=1023)){
+        Mot_halt();
+        Mot_Revers();
+    }
+
+    if((ODSA.OD2_data>=900) && (ODSA.OD2_data<=1023)){
+        Mot_halt();
+        Mot_Revers();
+
+    }
+
+    if((ODSA.OD3_data>=900) && (ODSA.OD3_data<=1023)){
+        Mot_halt();
+        Mot_Revers();
+    }
 
    }
 
@@ -271,17 +334,6 @@ void loop() {
   }
    
 old_state = but_value;
-
-
-
-Mot_forward();
-delay(2000);
-Mot_halt();
-delay(2000);
-
-  
-
-
 
 
 
