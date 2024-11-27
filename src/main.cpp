@@ -7,7 +7,7 @@ uint8_t new_state = 0;
 uint8_t but_value;
 uint8_t activate;
 
-uint8_t MAX_SPEED = 200;
+uint8_t MAX_SPEED = 150;
 float SOUND_SPEED = 0.034;       //speed of sound 343 m/s
 
 
@@ -121,12 +121,47 @@ void ODS_Data(ODsensor *ods){
 
  }
 
- void Servo_1_control(){
-  uint a=180;
+ void Shoulder_down(){
+  // servo_1.write(130);
+  // delay(200);
+  // servo_1.write(90);
+  for(uint8_t a =0;a<=180;a++){
     servo_1.write(a);
-    Serial.println(a);
-
+    delay(100);
+  }
  }
+
+ void Shoulder_up(){
+  // servo_1.write(50);
+  // delay(200);
+  // servo_1.write(90);
+ }
+
+ void elbow_down(){
+  servo_2.write(130);
+  delay(200);
+  servo_2.write(90);
+ }
+
+ void elbow_up(){
+  servo_2.write(50);
+  delay(200);
+  servo_2.write(90);
+ }
+
+  void shoulder_right(){
+  servo_3.write(130);
+  delay(200);
+  servo_3.write(90);
+ }
+
+ void shoulder_left(){
+  servo_3.write(50);
+  delay(200);
+  servo_3.write(90);
+ }
+
+
 
 
  void Mot_forward(){
@@ -155,17 +190,17 @@ void ODS_Data(ODsensor *ods){
    while(act == 1){
       ODS_Data(&ODSA);
       US_Data(&USSA);
-      Serial.print(ODSA.OD1_data);
-      Serial.print("|");
-      Serial.print(ODSA.OD2_data);
-      Serial.print("|");
-      Serial.print(ODSA.OD3_data);
-      Serial.print("|");
-      Serial.print(USSA.US_1_data);
-      Serial.print("|");
-      Serial.print(USSA.US_2_data);
-      Serial.print("|");
-      Serial.println(USSA.US_3_data);
+      Serial2.print(ODSA.OD1_data);
+      Serial2.print("|");
+      Serial2.print(ODSA.OD2_data);
+      Serial2.print("|");
+      Serial2.print(ODSA.OD3_data);
+      Serial2.print("|");
+      Serial2.print(USSA.US_1_data);
+      Serial2.print("|");
+      Serial2.print(USSA.US_2_data);
+      Serial2.print("|");
+      Serial2.println(USSA.US_3_data);
 
    }
 
@@ -174,7 +209,7 @@ void ODS_Data(ODsensor *ods){
 
 void setup() {
 
-  Serial.begin(9600);
+  Serial2.begin(9600);
 
   pinMode(B,INPUT_PULLUP);
 
@@ -205,6 +240,14 @@ void setup() {
   servo_2.attach(S2);
   servo_3.attach(S3);
 
+ 
+//   Shoulder_down();
+//   Shoulder_up();
+//   elbow_down();
+//   elbow_up();
+//   shoulder_left();
+//   shoulder_right();
+
   
 }
 
@@ -229,11 +272,12 @@ void loop() {
    
 old_state = but_value;
 
-Servo_1_control();
-// Mot_forward();
-// delay(2000);
-// Mot_halt();
-// delay(2000);
+
+
+Mot_forward();
+delay(2000);
+Mot_halt();
+delay(2000);
 
   
 
